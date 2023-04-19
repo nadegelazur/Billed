@@ -15,34 +15,64 @@ export default class NewBill {
     this.billId = null
     new Logout({ document, localStorage, onNavigate })
   }
+  // Fix bug: #[Bug Hunt] - Bills
   handleChangeFile = e => {
     e.preventDefault()
+    // Récupération du fichier importé
     const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
-    const filePath = e.target.value.split(/\\/g)
-    const fileName = filePath[filePath.length-1]
-    const formData = new FormData()
-    const email = JSON.parse(localStorage.getItem("user")).email
-    formData.append('file', file)
-    formData.append('email', email)
+    // Récupération du nom di fichier importé
+    const fileName = file ? file.name : ""
+    // Séparation du nom au niveau du "."
+    const splitFileName = fileName.split(".")
+    // Conservation de l'extention du Fichier importé
+    const fileExt = splitFileName[splitFileName.length - 1]
+    // Mide en place de l'extention en minuscule pour la compatibilité du test
+    const fileExtLower = fileExt.toLowerCase()
+    // Création d'un tableau pour les extentions souhaité
+    const fileType = ["jpg", "png", "jpeg"]
+    // Vérification entre le tableau et l'extention du fichier importé
+    const fileAlowed = fileType.includes(fileExtLower)
+    // Récuperation de la ligne d'erreur dans le html
+    const errorFile = this.document.querySelector("#error-file")
+    /**
+     * Si fileExtentionMower != fileType[]
+     * Alors on affiche le message d'erreur
+     * Et on rend le champs file vide
+     * Sinon le message d'erreur reste non visible
+     * Et on continue la fonction
+     */
 
-    this.store
-      .bills()
-      .create({
-        data: formData,
-        headers: {
-          noContentType: true
-        }
-      })
-      .then(({fileUrl, key}) => {
-        console.log(fileUrl)
-        this.billId = key
-        this.fileUrl = fileUrl
-        this.fileName = fileName
-      }).catch(error => console.error(error))
+    if(!fileAlowed) {
+      errorFile.hidden = false
+      this.document.querySelector(`input[data-testid="file"]`).value = ""
+    } else {
+      errorFile.hidden = true
+      const formData = new FormData()
+      const email = JSON.parse(localStorage.getItem("user")).email
+      formData.append('file', file)
+      formData.append('email', email)
+
+      this.store
+        .bills()
+        .create({
+          data: formData,
+          headers: {
+            noContentType: true
+          }
+        })
+        .then(({fileUrl, key}) => {
+          console.log(fileUrl)
+          this.billId = key
+          this.fileUrl = fileUrl
+          this.fileName = fileName
+        }).catch(error => console.error(error))
+    }  
   }
+
   handleSubmit = e => {
     e.preventDefault()
-    console.log('e.target.querySelector(`input[data-testid="datepicker"]`).value', e.target.querySelector(`input[data-testid="datepicker"]`).value)
+    // console.log('e.target.querySelector(`input[data-testid="datepicker"]`).value', e.target.querySelector(`input[data-testid="datepicker"]`).value)
+    
     const email = JSON.parse(localStorage.getItem("user")).email
     const bill = {
       email,
