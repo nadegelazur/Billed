@@ -16,6 +16,7 @@ export default class NewBill {
     new Logout({ document, localStorage, onNavigate })
   }
   // Fix bug: #[Bug Hunt] - Bills
+  // Bug Commenté
   handleChangeFile = e => {
     e.preventDefault()
     // Récupération du fichier importé
@@ -35,7 +36,7 @@ export default class NewBill {
     // Récuperation de la ligne d'erreur dans le html
     const errorFile = this.document.querySelector("#error-file")
     /**
-     * Si fileExtentionMower != fileType[]
+     * Si fileExtLower != fileType[]
      * Alors on affiche le message d'erreur
      * Et on rend le champs file vide
      * Sinon le message d'erreur reste non visible
@@ -44,9 +45,11 @@ export default class NewBill {
 
     if(!fileAlowed) {
       errorFile.hidden = false
+      errorFile.style.display = "block"
       this.document.querySelector(`input[data-testid="file"]`).value = ""
     } else {
       errorFile.hidden = true
+      errorFile.style.display = "none"
       const formData = new FormData()
       const email = JSON.parse(localStorage.getItem("user")).email
       formData.append('file', file)

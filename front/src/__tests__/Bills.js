@@ -90,7 +90,7 @@ describe("Given I'm a user connected as Employee", () => {
       expect(screen.findAllByText("test3")).toBeTruthy()
     })
     describe("When an error occurs on API", () => {
-      beforEach(() => {
+      beforeEach(() => {
         jest.spyOn(mockStore, "bills")
         Object.defineProperty(
           window,
