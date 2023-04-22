@@ -153,7 +153,6 @@ export default class {
           .off("click")
           .on("click", (e) => this.handleEditTicket(e, bill, bills))
     })
-
     return bills
 
   }
